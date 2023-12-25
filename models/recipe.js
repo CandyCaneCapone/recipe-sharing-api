@@ -14,11 +14,7 @@ const recipeSchema = new mongoose.Schema({
   },
   ingredients: {
     type: [String],
-    requried: [true, "please provide ingredients"],
-  },
-  instructions: {
-    type: String,
-    required: [true, "please provide instructions"],
+    required: [true, "please provide ingredients"],
   },
   cookingTime: {
     type: Number,
