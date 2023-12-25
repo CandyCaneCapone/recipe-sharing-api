@@ -1,10 +1,13 @@
 const errorHandler = (err, req, res, next) => {
-  const message = err.message || "Internal server error";
-  const status = err.statusCode || 500;
+  let message = err.message || "Internal server error";
+  let status = err.statusCode || 500;
 
+  if (err.name === "CastError") {
+    status = 404;
+    message = `no recipe found with id ${err.value}`;
+  }
 
-  console.log(err)
-  res.status(status).json({message})
+  res.status(status).json({ message });
 };
 
 module.exports = errorHandler;

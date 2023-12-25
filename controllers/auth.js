@@ -32,7 +32,7 @@ const login = async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      { _id: user._id, username: user.user },
+      { _id: user._id, username: user.username },
       process.env.SECRET_KEY,
       {
         expiresIn: process.env.JWT_LIFETIME,
