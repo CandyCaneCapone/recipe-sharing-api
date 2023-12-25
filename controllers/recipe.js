@@ -35,9 +35,40 @@ const createRecipe = async (req, res, next) => {
   }
 };
 
+const updateRecipe = async (req, res, next) => {
+  try {
+    const recipeId = req.params.id;
+    const userId = req.user._id;
+
+    const updateData = {
+      title : req.body.title , 
+      ingredients : req.body.ingredients , 
+      instructions : req.body.instructions,
+      cookingTime : req.body.cookingTime,
+      tags : req.body.tags ,
+    }
+    const recipe = await Recipe.findOneAndUpdate(
+      { _id: recipeId, createdBy: userId },
+      updateData,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+
+    if (!recipe) {
+      throw new NotFoundError(`no recipe found with id ${recipeId}`);
+    }
+
+    res.json({ message: "recipe updated", recipe });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllRecipes,
   getSingleRecipe,
   createRecipe,
+  updateRecipe,
 };
