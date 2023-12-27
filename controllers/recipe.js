@@ -79,7 +79,29 @@ const deleteRecipe = async (req, res, next) => {
       throw new NotFoundError(`no recipe found with id ${recipeId}`);
     }
 
-    res.json({message : "recipe deleted" , recipe})
+    res.json({ message: "recipe deleted", recipe });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const addComment = async (req, res, next) => {
+  try {
+    const recipeId = req.params.id;
+
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundError(`no post found with id ${recipeId}`)
+    }
+
+    recipe.comments.push({
+      comment : req.body.comment , 
+      user : req.user._id 
+    })
+    
+    await recipe.save()
+    
+    res.json({ message: "comment added"});
   } catch (error) {
     next(error);
   }
@@ -91,4 +113,5 @@ module.exports = {
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  addComment,
 };

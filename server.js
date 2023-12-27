@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/recipe", isAuthenticated ,recipeRouter);
+app.use("/api/v1/recipes", isAuthenticated ,recipeRouter);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -36,7 +36,23 @@ const recipeSchema = new mongoose.Schema({
     type : mongoose.Types.ObjectId , 
     ref : "users" , 
     required : true 
-  }
+  },
+  comments: [
+    {
+      comment: {
+        type: String,
+        required: [true , "please provide comment text"],
+      },
+      user: {
+        type: mongoose.Types.ObjectId,
+        ref: "users",
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model("recipes", recipeSchema);
