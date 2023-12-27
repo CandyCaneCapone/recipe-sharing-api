@@ -111,7 +111,7 @@ const deleteComment = async (req, res, next) => {
   try {
     const { recipeId, commentId } = req.params;
 
-    const recipe = await Recipe.findById(recipeId);
+    const recipe = await Recipe.findOne({_id : recipeId , createdBy : req.user._id});
     if (!recipe) {
       throw new NotFoundError(`no recipe found with id ${recipeId}`);
     }
