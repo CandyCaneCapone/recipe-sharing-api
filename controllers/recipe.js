@@ -1,6 +1,5 @@
 const Recipe = require("../models/recipe");
 const NotFoundError = require("../errors/not-found");
-const BadRequestError = require("../errors/bad-request");
 
 const getAllRecipes = async (req, res, next) => {
   try {
@@ -41,12 +40,12 @@ const updateRecipe = async (req, res, next) => {
     const userId = req.user._id;
 
     const updateData = {
-      title : req.body.title , 
-      ingredients : req.body.ingredients , 
-      instructions : req.body.instructions,
-      cookingTime : req.body.cookingTime,
-      tags : req.body.tags ,
-    }
+      title: req.body.title,
+      ingredients: req.body.ingredients,
+      instructions: req.body.instructions,
+      cookingTime: req.body.cookingTime,
+      tags: req.body.tags,
+    };
     const recipe = await Recipe.findOneAndUpdate(
       { _id: recipeId, createdBy: userId },
       updateData,
@@ -66,9 +65,30 @@ const updateRecipe = async (req, res, next) => {
   }
 };
 
+const deleteRecipe = async (req, res, next) => {
+  try {
+    const recipeId = req.params.id;
+    const userId = req.user._id;
+
+    const recipe = await Recipe.findOneAndDelete({
+      _id: recipeId,
+      createdBy: userId,
+    });
+
+    if (!recipe) {
+      throw new NotFoundError(`no recipe found with id ${recipeId}`);
+    }
+
+    res.json({message : "recipe deleted" , recipe})
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getSingleRecipe,
   createRecipe,
   updateRecipe,
+  deleteRecipe,
 };
