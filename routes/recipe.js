@@ -14,5 +14,6 @@ router.delete(
   "/recipe/:recipeId/comment/:commentId",
   controllers.deleteComment
 );
+router.patch("/recipe/:recipeId/comment/:commentId", controllers.editComment);
 
 module.exports = router;

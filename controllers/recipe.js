@@ -136,6 +136,35 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
+const editComment = async (req, res, next) => {
+  try {
+    const { recipeId, commentId } = req.params;
+
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundError(`no recipe found with id ${recipeId}`);
+    }
+
+    const commentIndex = recipe.comments.findIndex(
+      (comment) =>
+        comment._id.toString() === commentId &&
+        comment.user.toString() === req.user._id
+    );
+
+    if (commentIndex === -1) {
+      throw new NotFoundError(`no comment found with id ${commentId}`);
+    }
+
+    recipe.comments[commentIndex].comment = req.body.comment;
+
+    await recipe.save()
+
+    res.json({message : "comment edited"})
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllRecipes,
   getSingleRecipe,
@@ -144,4 +173,5 @@ module.exports = {
   deleteRecipe,
   addComment,
   deleteComment,
+  editComment
 };
