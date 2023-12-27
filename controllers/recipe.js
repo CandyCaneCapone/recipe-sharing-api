@@ -111,13 +111,15 @@ const deleteComment = async (req, res, next) => {
   try {
     const { recipeId, commentId } = req.params;
 
-    const recipe = await Recipe.findOne({_id : recipeId , createdBy : req.user._id});
+    const recipe = await Recipe.findOne({ _id: recipeId });
     if (!recipe) {
       throw new NotFoundError(`no recipe found with id ${recipeId}`);
     }
 
     const commentIndex = recipe.comments.findIndex(
-      (comment) => comment._id.toString() === commentId
+      (comment) =>
+        comment._id.toString() === commentId &&
+        comment.user.toString() === req.user._id
     );
 
     if (commentIndex === -1) {
@@ -126,9 +128,9 @@ const deleteComment = async (req, res, next) => {
 
     recipe.comments.splice(commentIndex, 1);
 
-    await recipe.save()
+    await recipe.save();
 
-    res.json({message : "comment deleted"})
+    res.json({ message: "comment deleted" });
   } catch (error) {
     next(error);
   }
