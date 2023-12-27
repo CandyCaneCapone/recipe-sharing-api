@@ -3,7 +3,14 @@ const NotFoundError = require("../errors/not-found");
 
 const getAllRecipes = async (req, res, next) => {
   try {
-    const recipes = await Recipe.find({});
+    const { search } = req.query;
+
+    const queryObject = {};
+    if (search) {
+      queryObject.title = { $regex: search, $options: "i" };
+    }
+
+    const recipes = await Recipe.find(queryObject);
     res.json({ recipes });
   } catch (error) {
     next(error);
@@ -157,9 +164,9 @@ const editComment = async (req, res, next) => {
 
     recipe.comments[commentIndex].comment = req.body.comment;
 
-    await recipe.save()
+    await recipe.save();
 
-    res.json({message : "comment edited"})
+    res.json({ message: "comment edited" });
   } catch (error) {
     next(error);
   }
@@ -173,5 +180,5 @@ module.exports = {
   deleteRecipe,
   addComment,
   deleteComment,
-  editComment
+  editComment,
 };
