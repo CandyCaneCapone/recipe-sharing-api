@@ -91,17 +91,44 @@ const addComment = async (req, res, next) => {
 
     const recipe = await Recipe.findById(recipeId);
     if (!recipe) {
-      throw new NotFoundError(`no post found with id ${recipeId}`)
+      throw new NotFoundError(`no recipe found with id ${recipeId}`);
     }
 
     recipe.comments.push({
-      comment : req.body.comment , 
-      user : req.user._id 
-    })
-    
+      comment: req.body.comment,
+      user: req.user._id,
+    });
+
+    await recipe.save();
+
+    res.json({ message: "comment added" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteComment = async (req, res, next) => {
+  try {
+    const { recipeId, commentId } = req.params;
+
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundError(`no recipe found with id ${recipeId}`);
+    }
+
+    const commentIndex = recipe.comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      throw new NotFoundError(`no comment found with id ${commentId}`);
+    }
+
+    recipe.comments.splice(commentIndex, 1);
+
     await recipe.save()
-    
-    res.json({ message: "comment added"});
+
+    res.json({message : "comment deleted"})
   } catch (error) {
     next(error);
   }
@@ -114,4 +141,5 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   addComment,
+  deleteComment,
 };
