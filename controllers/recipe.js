@@ -20,7 +20,13 @@ const getAllRecipes = async (req, res, next) => {
 const getSingleRecipe = async (req, res, next) => {
   try {
     const recipeId = req.params.id;
-    const recipe = await Recipe.findById(recipeId);
+    const recipe = await Recipe.findById(recipeId).populate({
+      path : "comments",
+      populate : {
+        path : "user",
+        select : "-password"
+      }
+    });
 
     if (!recipe) {
       throw new NotFoundError(`no recipe found with id ${recipeId}`);
